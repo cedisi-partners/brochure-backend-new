@@ -10,13 +10,21 @@ app.use(express.json());
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Health check
+app.get("/", (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "Brochure backend is running"
+    });
+});
+
 app.post("/api/send_brochure", async (req, res) => {
     try {
         const { name, email, phoneNumber } = req.body;
 
-        console.log("name", name);
-        console.log("email", email);
-        console.log("phoneNumber", phoneNumber);
+        console.log("name:", name);
+        console.log("email:", email);
+        console.log("phoneNumber:", phoneNumber);
 
         if (!name || !email || !phoneNumber) {
             return res.status(400).json({
