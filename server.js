@@ -5,16 +5,15 @@ require("dotenv").config();
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ========================================
 // Health Check
 // ========================================
+
 app.get("/", (req, res) => {
     res.status(200).json({
         success: true,
@@ -25,7 +24,8 @@ app.get("/", (req, res) => {
 // ========================================
 // Send Brochure
 // ========================================
-app.post("/send_brochure", async (req, res) => {
+
+app.post("/api/send_brochure", async (req, res) => {
     try {
         const { name, email, phoneNumber } = req.body;
 
@@ -33,7 +33,6 @@ app.post("/send_brochure", async (req, res) => {
         console.log("email:", email);
         console.log("phoneNumber:", phoneNumber);
 
-        // Validate required fields
         if (!name || !email || !phoneNumber) {
             return res.status(400).json({
                 success: false,
@@ -41,26 +40,21 @@ app.post("/send_brochure", async (req, res) => {
             });
         }
 
-        // PDF URL
         const PDF_URL =
             "https://pub-3a8504c29aee40d6893dac5c9534e027.r2.dev/gfa/FinTech%20for%20Microfinance%20Program_Brochure.pdf";
 
-        // Fetch PDF
         const pdfResponse = await fetch(PDF_URL);
 
         if (!pdfResponse.ok) {
             throw new Error("Failed to fetch PDF");
         }
 
-        // Convert PDF to Buffer
         const pdfBuffer = Buffer.from(
             await pdfResponse.arrayBuffer()
         );
 
-        // Convert PDF to Base64
         const pdfBase64 = pdfBuffer.toString("base64");
 
-        // Send email through Resend
         const { data, error } = await resend.emails.send({
             from: "Global FinTech Academy <no-reply@contact.cedisipartners.com>",
             to: [email],
@@ -99,7 +93,6 @@ app.post("/send_brochure", async (req, res) => {
             ]
         });
 
-        // Resend error
         if (error) {
             console.error("Resend error:", error);
 
@@ -110,7 +103,6 @@ app.post("/send_brochure", async (req, res) => {
             });
         }
 
-        // Success
         return res.status(200).json({
             success: true,
             message: "Brochure sent successfully",
@@ -127,5 +119,4 @@ app.post("/send_brochure", async (req, res) => {
     }
 });
 
-// Export app for Vercel
 module.exports = app;

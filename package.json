@@ -2,9 +2,9 @@
   "name": "brochure-backend",
   "version": "1.0.0",
   "description": "Brochure email backend",
-  "main": "api/index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node api/index.js"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
