@@ -75,7 +75,7 @@ app.post("/api/send_brochure", async (req, res) => {
                     </p>
 
                     <p>
-                        The PDF brochure is attached to this email.
+                        The PDF brochure is attached to this email. For more information and to explore our other courses visit us at <a href="https://globalfintechacademy.net/">https://globalfintechacademy.net/</a>.
                     </p>
 
                     <p>
