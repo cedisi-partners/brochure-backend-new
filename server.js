@@ -64,7 +64,7 @@ app.post("/api/send_brochure", async (req, res) => {
                 <div style="
                     font-family: Arial, sans-serif;
                     max-width: 600px;
-                    margin: 0 auto;
+                    margin: 0;
                     padding: 20px;
                 ">
                     <h2>Hello ${name},</h2>
