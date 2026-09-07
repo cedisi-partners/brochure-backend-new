@@ -27,7 +27,15 @@ app.get("/", (req, res) => {
 
 app.post("/api/send_brochure", async (req, res) => {
     try {
-        const { name, email, phoneNumber } = req.body;
+        const {
+            name,
+            email,
+            phoneNumber,
+            programTitle,
+            sendBrochure = true,
+            emailSubject,
+            emailMessage
+        } = req.body;
 
         console.log("name:", name);
         console.log("email:", email);
@@ -40,25 +48,25 @@ app.post("/api/send_brochure", async (req, res) => {
             });
         }
 
-        const PDF_URL =
-            "https://pub-3a8504c29aee40d6893dac5c9534e027.r2.dev/gfa/FinTech%20for%20Microfinance%20Program_Brochure.pdf";
+        let pdfBase64;
+        if (sendBrochure) {
+            const PDF_URL =
+                "https://pub-3a8504c29aee40d6893dac5c9534e027.r2.dev/gfa/FinTech%20for%20Microfinance%20Program_Brochure.pdf";
 
-        const pdfResponse = await fetch(PDF_URL);
+            const pdfResponse = await fetch(PDF_URL);
 
-        if (!pdfResponse.ok) {
-            throw new Error("Failed to fetch PDF");
+            if (!pdfResponse.ok) {
+                throw new Error("Failed to fetch PDF");
+            }
+
+            const pdfBuffer = Buffer.from(await pdfResponse.arrayBuffer());
+            pdfBase64 = pdfBuffer.toString("base64");
         }
-
-        const pdfBuffer = Buffer.from(
-            await pdfResponse.arrayBuffer()
-        );
-
-        const pdfBase64 = pdfBuffer.toString("base64");
 
         const { data, error } = await resend.emails.send({
             from: "Global FinTech Academy <no-reply@contact.cedisipartners.com>",
             to: [email],
-            subject: "Your Global FinTech Academy Program Brochure",
+            subject: emailSubject || "Your Global FinTech Academy Program Brochure",
 
             html: `
                 <div style="
@@ -69,14 +77,9 @@ app.post("/api/send_brochure", async (req, res) => {
                 ">
                     <h2>Hello ${name},</h2>
 
-                    <p>
-                        Thank you for your interest in our program!
-                        Here's your requested program brochure.
-                    </p>
+                    <p>${emailMessage || "Thank you for your interest in our program! Here's your requested program brochure."}</p>
 
-                    <p>
-                        The PDF brochure is attached to this email. For more information and to explore our other courses visit us at <a href="https://globalfintechacademy.net/">https://globalfintechacademy.net/</a>.
-                    </p>
+                    ${sendBrochure ? "<p>The PDF brochure is attached to this email. For more information and to explore our other courses visit us at <a href=\"https://globalfintechacademy.net/\">https://globalfintechacademy.net/</a>.</p>" : "<p>Our team will contact you shortly with the next steps.</p>"}
 
                     <p>
                         Best regards,<br>
@@ -85,12 +88,14 @@ app.post("/api/send_brochure", async (req, res) => {
                 </div>
             `,
 
-            attachments: [
-                {
-                    filename: "program-brochure.pdf",
-                    content: pdfBase64
-                }
-            ]
+            ...(pdfBase64 ? {
+                attachments: [
+                    {
+                        filename: "program-brochure.pdf",
+                        content: pdfBase64
+                    }
+                ]
+            } : {})
         });
 
         if (error) {
@@ -105,7 +110,7 @@ app.post("/api/send_brochure", async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Brochure sent successfully",
+            message: sendBrochure ? "Brochure sent successfully" : "Registration email sent successfully",
             data
         });
 
