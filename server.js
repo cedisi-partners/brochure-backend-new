@@ -79,7 +79,7 @@ app.post("/api/send_brochure", async (req, res) => {
 
                     <p>${emailMessage || "Thank you for your interest in our program! Here's your requested program brochure."}</p>
 
-                    ${sendBrochure ? "<p>The PDF brochure is attached to this email. For more information and to explore our other courses visit us at <a href=\"https://globalfintechacademy.net/\">https://globalfintechacademy.net/</a>.</p>" : "<p>Our team will contact you shortly with the next steps.</p>"}
+                    ${sendBrochure ? "<p>The PDF brochure is attached to this email. For more information and to explore our other courses visit us at <a href=\"https://globalfintechacademy.net/\">https://globalfintechacademy.net/</a>.</p>" : "<p>We appreciate your interest and will get back to you shortly with further details.</p>"}
 
                     <p>
                         Best regards,<br>
