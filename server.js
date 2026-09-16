@@ -271,9 +271,7 @@ app.post("/api/send_brochure", async (req, res) => {
         });
       }
 
-      const brochureUrl = `${
-        process.env.R2_PUBLIC_URL.replace(/\/$/, "")
-      }/brochures/${programSlug.trim()}.pdf`;
+      const brochureUrl = `${process.env.R2_PUBLIC_URL.replace(/\/$/, "")}/gfa/brochures/${programSlug.trim()}.pdf`;
 
       console.log("Fetching brochure:", brochureUrl);
 
