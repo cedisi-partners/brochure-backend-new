@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model admins {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  password_hash String
+  name          String?
+  created_at    DateTime @default(now())
+}
+
+model audit_log {
+  id          Int      @id @default(autoincrement())
+  admin_email String?
+  action      String
+  target      String?
+  created_at  DateTime @default(now())
+}
+
+model collections {
+  id         Int      @id @default(autoincrement())
+  type       String
+  data       Json     @default("{}")
+  sort_order Int      @default(0)
+  published  Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  @@index([type])
+}
+
+model leads {
+  id         Int      @id @default(autoincrement())
+  form_type  String   @default("contact")
+  data       Json     @default("{}")
+  read       Boolean  @default(false)
+  created_at DateTime @default(now())
+}
+
+model media {
+  id            Int      @id @default(autoincrement())
+  filename      String
+  url           String
+  original_name String?
+  mime_type     String?
+  size_bytes    Int?
+  width         Int?
+  height        Int?
+  alt_text      String   @default("")
+  created_at    DateTime @default(now())
+}
+
+model playing_with_neon {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Float? @db.Real
+}
+
+model singletons {
+  key        String   @id
+  data       Json     @default("{}")
+  updated_at DateTime @default(now())
+  visible    String   @default("show")
+}
+
+model Program {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  brochureUrl String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
